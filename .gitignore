@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment (Crucial!)
+# This ignores your E:\sms_env\ folder
+sms_env/
+venv/
+env/
+ENV/
+
+# Database
+# Ignores your local SQLite database so others don't get your test data
+db.sqlite3
+db.sqlite3-journal
+
+# Django sensitive files
+local_settings.py
+.env
+
+# Static & Media
+# Usually, we don't track uploaded user media or gathered static files
+/static/
+/media/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/

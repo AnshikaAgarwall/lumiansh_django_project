@@ -1,0 +1,215 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Checkout - {{ candle.name }} | LumiAnsh{% endblock %}
+
+{% block content %}
+<style>
+    .field-error  { border-color: #e5a0a0 !important; }
+    .error-msg    { color: #c0392b; font-size: 0.72rem; margin-top: 4px; display: none; }
+    .error-msg.show { display: block; }
+    input.valid, textarea.valid { border-color: #6abc8a !important; }
+</style>
+
+<div class="min-h-[70vh] flex items-center justify-center p-6 bg-[#fff8f8]">
+    <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-[#f0d5d5]">
+
+        <!-- LEFT: Product Info -->
+        <div class="md:w-2/5 p-8 flex flex-col justify-center" style="background-color:#1a1a1a; color:white;">
+            <img src="{{ candle.image_url }}" class="w-32 h-32 rounded-2xl object-cover mb-6 border-2 shadow-lg" style="border-color:rgba(229,160,160,0.4);">
+            <h2 class="text-2xl font-bold mb-2">{{ candle.name }}</h2>
+            <p class="text-gray-400 text-sm mb-4">{{ candle.description }}</p>
+            <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Total Price</label>
+             <div id="totalPrice" class="text-2xl font-bold mt-1" style="color:#e5a0a0;"> ₹{{ candle.price }}   </div>
+        </div>
+
+        </div>
+
+        <!-- RIGHT: Order Form -->
+        <div class="md:w-3/5 p-8 overflow-y-auto">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Complete Your Order</h3>
+
+            <!-- Server-side error messages -->
+            {% if messages %}
+                {% for message in messages %}
+                <div class="mb-3 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 flex items-start gap-2">
+                    <span>⚠</span> {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" id="orderForm" class="space-y-4" novalidate>
+                {% csrf_token %}
+
+                <!-- naam bataiyyeeeeeeeeeeeeee-->
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Full Name <span class="text-[#e5a0a0]">*</span></label>
+                    <input type="text" name="name" id="name" required
+                           value="{{ form_data.name|default:'' }}"
+                           class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    <p class="error-msg" id="name-err">Please enter your full name.</p>
+                </div>
+
+                <!-- Phone + Email-->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Phone <span class="text-[#e5a0a0]">*</span></label>
+                        <input type="tel" name="phone" id="phone" required
+                               placeholder="9876543210"
+                               value="{{ form_data.phone|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                        <p class="error-msg" id="phone-err">Enter a valid 10-digit mobile number.</p>
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Email <span class="text-[#e5a0a0]">*</span></label>
+                        <input type="email" name="email" id="email" required
+                               placeholder="name@example.com"
+                               value="{{ form_data.email|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                        <p class="error-msg" id="email-err">Enter a valid email address.</p>
+                    </div>
+                </div>
+
+                <!-- Quantity  kitnaaaaaaaaaaaaaaaaaaaa-->
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Quantity</label>
+                    <input type="number" name="quantity" id="quantity" value="{{ form_data.quantity|default:'1' }}" min="1" max="{{ candle.stock }}"
+                           class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                </div>
+
+                <!-- UPI ID  paiseeee kaise dene h bhaiiiiiiiiiiiiiiiiii-->
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-400">UPI ID <span class="text-[#e5a0a0]">*</span></label>
+                    <input type="text" name="upi_id" id="upi_id" required
+                           placeholder="yourname@upi"
+                           value="{{ form_data.upi_id|default:'' }}"
+                           class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    <p class="error-msg" id="upi-err">Enter a valid UPI ID (e.g. name@paytm, 98765@upi).</p>
+                </div>
+
+                <!-- Address kidhr rehta h re tu-->
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Full Delivery Address <span class="text-[#e5a0a0]">*</span></label>
+                    <textarea name="address" id="address" required rows="3"
+                              class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">{{ form_data.address|default:'' }}</textarea>
+                    <p class="error-msg" id="addr-err">Please enter your delivery address.</p>
+                </div>
+
+                <button type="submit" class="btn-primary w-full font-bold py-4 rounded-xl shadow-lg">
+                    Confirm &amp; Pay
+                </button>
+                <a href="{% url 'product_list' %}" class="block text-center text-xs text-gray-400 hover:text-[#e5a0a0] underline transition">
+                    ← Return to Shop
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── helpers ──────────────────────────────────────────
+    const phoneRe = /^(\+91|0)?[6-9]\d{9}$/;
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const upiRe   = /^[\w.\-]+@[\w]+$/;
+
+    function setValid(el, errEl) {
+        el.classList.remove('field-error');
+        el.classList.add('valid');
+        errEl.classList.remove('show');
+    }
+    function setInvalid(el, errEl) {
+        el.classList.add('field-error');
+        el.classList.remove('valid');
+        errEl.classList.add('show');
+    }
+
+    // ── field ───────────────────────────────────────
+    const nameEl  = document.getElementById('name');
+    const phoneEl = document.getElementById('phone');
+    const emailEl = document.getElementById('email');
+    const upiEl   = document.getElementById('upi_id');
+    const addrEl  = document.getElementById('address');
+
+    // ──validation (───────────────────────────
+    nameEl.addEventListener('blur', () => {
+        nameEl.value.trim()
+            ? setValid(nameEl, document.getElementById('name-err'))
+            : setInvalid(nameEl, document.getElementById('name-err'));
+    });
+
+    phoneEl.addEventListener('blur', () => {
+        phoneRe.test(phoneEl.value.trim())
+            ? setValid(phoneEl, document.getElementById('phone-err'))
+            : setInvalid(phoneEl, document.getElementById('phone-err'));
+    });
+
+    emailEl.addEventListener('blur', () => {
+        emailRe.test(emailEl.value.trim())
+            ? setValid(emailEl, document.getElementById('email-err'))
+            : setInvalid(emailEl, document.getElementById('email-err'));
+    });
+
+    upiEl.addEventListener('blur', () => {
+        upiRe.test(upiEl.value.trim())
+            ? setValid(upiEl, document.getElementById('upi-err'))
+            : setInvalid(upiEl, document.getElementById('upi-err'));
+    });
+
+    addrEl.addEventListener('blur', () => {
+        addrEl.value.trim()
+            ? setValid(addrEl, document.getElementById('addr-err'))
+            : setInvalid(addrEl, document.getElementById('addr-err'));
+    });
+    // ── TOTAL PRICE LOGIC ─────────────────────────
+
+const price = parseFloat("{{ candle.price }}");
+
+
+const qtyEl = document.getElementById('quantity');
+const totalEl = document.getElementById('totalPrice');
+
+function updateTotal() {
+    let qty = parseInt(qtyEl.value);
+
+    if (isNaN(qty) || qty < 1) {
+        qty = 1;
+        qtyEl.value = 1;
+    }
+
+    const total = price * qty;
+    totalEl.textContent = "₹" + total.toFixed(2);
+}
+
+
+updateTotal();
+
+
+qtyEl.addEventListener('input', updateTotal);
+
+    // ── submit gate ──────────────────────────────────────
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+        let ok = true;
+
+        if (!nameEl.value.trim()) {
+            setInvalid(nameEl, document.getElementById('name-err')); ok = false;
+        }
+        if (!phoneRe.test(phoneEl.value.trim())) {
+            setInvalid(phoneEl, document.getElementById('phone-err')); ok = false;
+        }
+        if (!emailRe.test(emailEl.value.trim())) {
+            setInvalid(emailEl, document.getElementById('email-err')); ok = false;
+        }
+        if (!upiRe.test(upiEl.value.trim())) {
+            setInvalid(upiEl, document.getElementById('upi-err')); ok = false;
+        }
+        if (!addrEl.value.trim()) {
+            setInvalid(addrEl, document.getElementById('addr-err')); ok = false;
+        }
+
+        if (!ok) e.preventDefault();
+
+
+    });
+</script>
+{% endblock %}

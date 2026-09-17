@@ -1,0 +1,260 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — LumiAnsh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #fff8f8; }
+        .cursive { font-family: 'Dancing Script', cursive; }
+        .sidebar { width: 240px; min-height: 100vh; background: #1a1a1a; }
+        .stat-card { background: white; border: 1px solid #f0d5d5; border-radius: 16px; padding: 20px 24px; }
+        .badge-pending   { background:#fff3cd; color:#856404; }
+        .badge-completed { background:#d1fae5; color:#065f46; }
+        .badge-cancelled { background:#fee2e2; color:#991b1b; }
+        .btn-rose { background:#e5a0a0; color:white; }
+        .btn-rose:hover { background:#d48e8e; }
+        .btn-dark { background:#1a1a1a; color:white; }
+        .btn-dark:hover { background:#333; }
+        .table-row:hover { background:#fff0f0; }
+
+        /* delete confirm modal */
+        #deleteModal { display:none; }
+        #deleteModal.open { display:flex; }
+    </style>
+</head>
+<body class="flex">
+
+<!-- ── SIDEBAR ─────────────────────────────────────────── -->
+<aside class="sidebar flex-shrink-0 flex flex-col py-8 px-5 text-white sticky top-0 h-screen">
+    <p class="cursive text-3xl text-[#e5a0a0] mb-1">LumiAnsh</p>
+    <p class="text-gray-400 text-xs uppercase tracking-widest mb-10">Admin Panel</p>
+
+    <nav class="space-y-2 flex-1">
+        <a href="#products" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition text-sm font-medium">
+            🕯 Products
+        </a>
+        <a href="#orders" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-sm font-medium">
+            📦 Recent Orders
+        </a>
+        <a href="{% url 'admin_product_add' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-sm font-medium text-[#e5a0a0]">
+            ＋ Add Product
+        </a>
+    </nav>
+
+    <div class="space-y-2 mt-auto">
+        <a href="{% url 'home_landing' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-sm text-gray-400">
+            🏠 View Shop
+        </a>
+        <a href="{% url 'admin_logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-900/30 transition text-sm text-red-400">
+            ⏻ Logout
+        </a>
+    </div>
+</aside>
+
+<!-- ── MAIN CONTENT ─────────────────────────────────────── -->
+<main class="flex-1 overflow-y-auto">
+
+    <!-- Top bar -->
+    <header class="sticky top-0 z-10 bg-[#fff8f8] border-b border-[#f0d5d5] px-8 py-4 flex items-center justify-between">
+        <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-gray-500">Welcome, <strong>{{ request.user.username }}</strong></span>
+            <a href="{% url 'admin_product_add' %}" class="btn-rose px-5 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition">
+                + Add Product
+            </a>
+        </div>
+    </header>
+
+    <div class="px-8 py-8 space-y-10">
+
+        <!-- ── FLASH MESSAGES ──────────────────────────────── -->
+        {% if messages %}
+        <div class="space-y-2">
+            {% for message in messages %}
+            <div class="px-4 py-3 rounded-xl text-sm font-medium
+                {% if message.tags == 'success' %}bg-green-50 text-green-700 border border-green-200
+                {% else %}bg-red-50 text-red-700 border border-red-200{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- ── STATS ─────────────────────────────────────────── -->
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="stat-card">
+                <p class="text-xs uppercase tracking-widest text-gray-400 mb-1">Total Products</p>
+                <p class="text-4xl font-bold text-[#e5a0a0]">{{ candles.count }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="text-xs uppercase tracking-widest text-gray-400 mb-1">Total Orders</p>
+                <p class="text-4xl font-bold text-gray-800">{{ total_orders }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="text-xs uppercase tracking-widest text-gray-400 mb-1">Revenue</p>
+                <p class="text-4xl font-bold text-gray-800">₹{{ total_rev }}</p>
+                {% if low_stock %}<p class="text-xs text-red-400 mt-2">⚠ {{ low_stock }} product(s) low on stock</p>{% endif %}
+            </div>
+        </section>
+
+        <!-- ── PRODUCTS TABLE ─────────────────────────────────── -->
+        <section id="products">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold text-gray-800">🕯 All Products</h2>
+                <a href="{% url 'admin_product_add' %}" class="btn-rose px-4 py-2 rounded-xl text-xs font-bold transition">+ Add New</a>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#f0d5d5] overflow-hidden shadow-sm">
+                {% if candles %}
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-[#fff8f8] border-b border-[#f0d5d5] text-left text-xs uppercase tracking-wider text-gray-400">
+                            <th class="px-6 py-4">Product</th>
+                            <th class="px-4 py-4">Price</th>
+                            <th class="px-4 py-4">Stock</th>
+                            <th class="px-4 py-4">Added</th>
+                            <th class="px-4 py-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#f0d5d5]">
+                        {% for candle in candles %}
+                        <tr class="table-row transition">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-4">
+                                    {% if candle.image_url %}
+                                    <img src="{{ candle.image_url }}" class="w-12 h-12 rounded-xl object-cover border border-[#f0d5d5]">
+                                    {% else %}
+                                    <div class="w-12 h-12 rounded-xl bg-[#fff0f0] flex items-center justify-center text-xl">🕯</div>
+                                    {% endif %}
+                                    <div>
+                                        <p class="font-semibold text-gray-800">{{ candle.name }}</p>
+                                        <p class="text-gray-400 text-xs line-clamp-1 max-w-xs">{{ candle.description }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-4 font-bold text-[#e5a0a0]">₹{{ candle.price }}</td>
+                            <td class="px-4 py-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold
+                                    {% if candle.stock <= 3 %}bg-red-100 text-red-600{% elif candle.stock <= 10 %}bg-yellow-100 text-yellow-700{% else %}bg-green-100 text-green-700{% endif %}">
+                                    {{ candle.stock }} left
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 text-gray-400 text-xs">{{ candle.created_at|date:"d M Y" }}</td>
+                            <td class="px-4 py-4">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{% url 'admin_product_edit' candle.id %}"
+                                       class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                                        ✏ Edit
+                                    </a>
+                                    <button onclick="openDelete('{{ candle.id }}', '{{ candle.name|escapejs }}')"
+                                            class="bg-red-50 hover:bg-red-100 text-red-500 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                                        🗑 Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="py-20 text-center text-gray-400">
+                    No products yet. <a href="{% url 'admin_product_add' %}" class="text-[#e5a0a0] underline">Add your first product →</a>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- ── RECENT ORDERS ──────────────────────────────────── -->
+        <section id="orders">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📦 Recent Orders</h2>
+            <div class="bg-white rounded-2xl border border-[#f0d5d5] overflow-hidden shadow-sm">
+                {% if orders %}
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="bg-[#fff8f8] border-b border-[#f0d5d5] text-left text-xs uppercase tracking-wider text-gray-400">
+                            <th class="px-6 py-4">#</th>
+                            <th class="px-4 py-4">Customer</th>
+                            <th class="px-4 py-4">Product</th>
+                            <th class="px-4 py-4">Qty</th>
+                            <th class="px-4 py-4">Total</th>
+                            <th class="px-4 py-4">Status</th>
+                            <th class="px-4 py-4">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#f0d5d5]">
+                        {% for order in orders %}
+                        <tr class="table-row transition">
+                            <td class="px-6 py-4 text-gray-400 font-mono text-xs">#{{ order.id }}</td>
+                            <td class="px-4 py-4">
+                                <p class="font-semibold text-gray-800">{{ order.customer_name }}</p>
+                                <p class="text-gray-400 text-xs">{{ order.customer_phone }}</p>
+                            </td>
+                            <td class="px-4 py-4 text-gray-700">{{ order.candle_name }}</td>
+                            <td class="px-4 py-4 text-gray-700">{{ order.quantity }}</td>
+                            <td class="px-4 py-4 font-bold text-[#e5a0a0]">₹{{ order.total_price }}</td>
+                            <td class="px-4 py-4">
+                                <form method="POST" action="{% url 'admin_order_status' order.id %}">
+                                    {% csrf_token %}
+                                    <select name="status" onchange="this.form.submit()"
+                                            class="text-xs px-2 py-1 rounded-lg border border-[#f0d5d5] outline-none
+                                            {% if order.status == 'completed' %}bg-green-50 text-green-700
+                                            {% elif order.status == 'cancelled' %}bg-red-50 text-red-600
+                                            {% else %}bg-yellow-50 text-yellow-700{% endif %}">
+                                        <option value="pending"   {% if order.status == 'pending'   %}selected{% endif %}>⏳ Pending</option>
+                                        <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>✅ Completed</option>
+                                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>❌ Cancelled</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td class="px-4 py-4 text-gray-400 text-xs">{{ order.created_at|date:"d M, H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="py-16 text-center text-gray-400">No orders yet.</div>
+                {% endif %}
+            </div>
+        </section>
+
+    </div><!-- /px-8 -->
+</main>
+
+<!-- ── DELETE CONFIRM MODAL ─────────────────────────────── -->
+<div id="deleteModal" class="fixed inset-0 bg-black/50 z-50 items-center justify-center backdrop-blur-sm open:flex">
+    <div class="bg-white rounded-2xl p-8 shadow-2xl max-w-sm w-full mx-4 text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🗑</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Product?</h3>
+        <p class="text-gray-500 text-sm mb-6">Are you sure you want to delete <strong id="deleteName"></strong>? This cannot be undone.</p>
+        <div class="flex gap-3">
+            <button onclick="closeDelete()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold transition">
+                Cancel
+            </button>
+            <form id="deleteForm" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-xl font-semibold transition">
+                    Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openDelete(id, name) {
+        document.getElementById('deleteName').textContent = '"' + name + '"';
+        document.getElementById('deleteForm').action = '/dashboard/product/' + id + '/delete/';
+        document.getElementById('deleteModal').classList.add('open');
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+    function closeDelete() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

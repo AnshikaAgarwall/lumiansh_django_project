@@ -1,0 +1,84 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Our Customers - LumiAnsh{% endblock %}
+
+{% block nav_customers %}active{% endblock %}
+
+{% block content %}
+<div class="bg-[#fff8f8] relative min-h-screen">
+
+    <!-- HEADER -->
+    <header class="py-16 text-center px-4">
+        <h1 class="cursive text-5xl text-[#e5a0a0] mb-4">🕯 Who Are Our Customers?</h1>
+        <p class="max-w-2xl mx-auto text-gray-500 leading-relaxed">
+            Our candles are designed for every special moment and every special person. Whether you are planning a celebration, looking for a gift, or simply want to create a cozy atmosphere, our candles are made to fit perfectly into your life.
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pb-28">
+
+        <!-- BANNER IMAGE -->
+        <div class="mb-20 rounded-3xl overflow-hidden shadow-2xl h-[400px]">
+            <img src="{% static 'shop/images/customers.jpg' %}"
+                 onerror="this.src='https://images.unsplash.com/photo-1605651202774-7d573fd3f12d?auto=format&fit=crop&q=80&w=1200'"
+                 class="w-full h-full object-cover" alt="LumiAnsh Moments">
+        </div>
+
+        <!-- CUSTOMER CATEGORIES -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+
+            <div class="space-y-3 bg-white p-6 rounded-2xl border border-[#f0d5d5] card-hover">
+                <h3 class="cursive text-3xl text-[#e5a0a0]">🎉 Kitty Parties</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Add a warm and classy touch to your kitty parties with our elegant candles. They create a welcoming ambiance and make your get-together feel extra special. Perfect as table centerpieces or small return gifts for your guests.
+                </p>
+            </div>
+
+            <div class="space-y-3 bg-white p-6 rounded-2xl border border-[#f0d5d5] card-hover">
+                <h3 class="cursive text-3xl text-[#e5a0a0]">🎂 Birthday Gifts</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    A candle is more than just a gift — it is a memory in the making. Our beautifully designed candles make birthdays more memorable. Pair them with flowers, chocolates, or greeting cards for a thoughtful surprise.
+                </p>
+            </div>
+
+            <div class="space-y-3 bg-white p-6 rounded-2xl border border-[#f0d5d5] card-hover">
+                <h3 class="cursive text-3xl text-[#e5a0a0]">💝 Personal Gifting</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Whether it's an anniversary, Valentine's Day, or just a random love note, our candles are perfect for expressing emotions. Light a romantic dinner date with rose-scented candles or surprise someone special.
+                </p>
+            </div>
+
+            <div class="space-y-3 bg-white p-6 rounded-2xl border border-[#f0d5d5] card-hover">
+                <h3 class="cursive text-3xl text-[#e5a0a0]">🏡 House Warming</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Our candles are a great way to say "Congratulations on your new home." They bring light, positivity, and fragrance to a fresh space. A housewarming gift that truly warms the house!
+                </p>
+            </div>
+
+            <div class="col-span-1 md:col-span-2 space-y-3 bg-white p-8 rounded-2xl border border-[#f0d5d5] card-hover">
+                <h3 class="cursive text-3xl text-[#e5a0a0]">💼 Corporate or Festive Gifting</h3>
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    Elevate your professional relationships with a touch of warmth. Our bulk gifting options are perfect for festivals or corporate milestones, offering a premium experience that shows you care about the details.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- CTA -->
+        <div class="mt-20 text-center">
+            <a href="{% url 'product_list' %}" class="btn-primary inline-block px-10 py-4 rounded-full font-semibold shadow-lg text-lg">
+                Explore Our Collection
+            </a>
+        </div>
+    </main>
+
+    <!-- ADMIN BUTTON — bottom-left corner of this page -->
+    <a href="{% url 'admin_dashboard' %}"
+       class="fixed bottom-6 left-6 z-50 bg-black text-white text-xs font-bold px-4 py-2 rounded-lg shadow-lg hover:bg-gray-800 transition opacity-70 hover:opacity-100"
+       title="Admin Panel">
+        ⚙ Admin
+    </a>
+
+</div>
+{% endblock %}

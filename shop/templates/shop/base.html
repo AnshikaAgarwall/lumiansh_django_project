@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LumiAnsh Candle Shop{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; background-color: #fff8f8; color: #1a1a1a; }
+        .cursive { font-family: 'Dancing Script', cursive; }
+        .hero-poster { height: 50vh; }
+        .nav-link {
+            position: relative;
+            color: #1a1a1a;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #e5a0a0;
+            transition: width 0.2s ease;
+        }
+        .nav-link:hover { color: #e5a0a0; }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.active { color: #e5a0a0; font-weight: 700; }
+        .nav-link.active::after { width: 100%; }
+        .btn-primary {
+            background-color: #e5a0a0;
+            color: #ffffff;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-primary:hover { background-color: #d48e8e; transform: scale(1.03); }
+        .btn-primary:active { transform: scale(0.97); }
+        .card-hover { transition: box-shadow 0.3s, transform 0.3s; }
+        .card-hover:hover { box-shadow: 0 12px 40px rgba(229,160,160,0.2); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-[#fff8f8] text-[#1a1a1a]">
+
+<!-- NAVBAR -->
+<nav class="bg-white border-b border-[#f0d5d5] sticky top-0 z-50 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="{% url 'home_landing' %}" class="cursive text-2xl font-bold tracking-tight text-[#e5a0a0] hover:opacity-80 transition">LumiAnsh</a>
+
+        <div class="space-x-6 text-sm font-medium flex items-center uppercase tracking-wide">
+            <a href="{% url 'home_landing' %}" class="nav-link {% block nav_home %}{% endblock %}">Home</a>
+            <a href="{% url 'customer_story' %}" class="nav-link {% block nav_customers %}{% endblock %}">Our Customers</a>
+            <a href="{% url 'buy_landing' %}" class="nav-link {% block nav_buy %}{% endblock %}">Buy</a>
+            <a href="{% url 'buy_landing' %}#contact" class="nav-link {% block nav_about %}{% endblock %}">About</a>
+        </div>
+    </div>
+</nav>
+
+{% block content %}
+{% endblock %}
+
+<!-- FOOTER -->
+<footer class="bg-white border-t border-[#f0d5d5] py-10 mt-20">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+        <p class="cursive text-3xl mb-2 text-[#e5a0a0]">LumiAnsh</p>
+        <p class="text-gray-400 text-xs uppercase tracking-widest">Personalized Solutions for Every Home</p>
+        <p class="text-gray-400 text-[10px] mt-4">© 2026 LumiAnsh. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

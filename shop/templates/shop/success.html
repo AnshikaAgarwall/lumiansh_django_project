@@ -1,0 +1,35 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Order Successful - LumiAnsh{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center p-6 bg-[#fff8f8]">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-10 border border-[#f0d5d5] text-center">
+
+        <!-- Success Icon -->
+        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
+             style="background-color: #fde8e8; color: #e5a0a0;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+
+        <h2 class="cursive text-4xl text-[#e5a0a0] mb-3">Order Placed!</h2>
+        <p class="text-gray-600 mb-8 leading-relaxed">
+            Thank you for choosing <strong>LumiAnsh</strong>. We've received your order and are preparing your candles for delivery.
+        </p>
+
+        <div class="bg-[#fff8f8] border border-[#f0d5d5] p-4 rounded-xl text-left text-sm text-gray-700 mb-8">
+            <p class="font-semibold mb-1 text-[#e5a0a0]">Next Steps:</p>
+            <p>Please ensure you have completed the UPI payment. Our team will verify it shortly!</p>
+        </div>
+
+        <a href="{% url 'product_list' %}" class="btn-primary inline-block w-full px-8 py-4 rounded-xl font-bold shadow-lg">
+            Continue Shopping
+        </a>
+        <a href="{% url 'home_landing' %}" class="block text-center text-xs text-gray-400 hover:text-[#e5a0a0] underline mt-4 transition">
+            ← Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}

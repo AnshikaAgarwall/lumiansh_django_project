@@ -1,0 +1,76 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}LumiAnsh - Our Collection{% endblock %}
+
+{% block content %}
+<div id="collection" class="max-w-6xl mx-auto px-4 py-10">
+
+    <!-- SEARCH & FILTER -->
+    <section class="mb-10 bg-white p-6 rounded-2xl shadow-sm border border-[#f0d5d5]">
+        <form method="GET" action="{% url 'product_list' %}" class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1 relative">
+                <input type="text" name="q" value="{{ query|default:'' }}"
+                       placeholder="Search candles..."
+                       class="w-full pl-4 pr-4 py-3 border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition bg-[#fff8f8]">
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-gray-500">Max Price:</span>
+                <input type="number" name="max_price" value="{{ max_price|default:'' }}"
+                       placeholder="₹999"
+                       class="w-28 p-3 border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition bg-[#fff8f8]">
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="btn-primary px-8 py-3 rounded-xl font-semibold">
+                    Apply
+                </button>
+                <a href="{% url 'product_list' %}" class="bg-gray-100 text-gray-600 px-6 py-3 rounded-xl font-semibold hover:bg-gray-200 transition text-center">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </section>
+
+    <!-- PAGE HEADING -->
+    <h1 class="cursive text-4xl text-[#e5a0a0] mb-8 text-center">Our Candle Collection</h1>
+
+    <!-- PRODUCTS GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for candle in candles %}
+        <div class="group bg-white rounded-2xl shadow-sm card-hover overflow-hidden border border-[#f0d5d5]">
+            <div class="relative aspect-square overflow-hidden bg-[#fff8f8]">
+                <img src="{{ candle.image_url|default:'https://via.placeholder.com/400' }}"
+                     alt="{{ candle.name }}"
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                {% if candle.stock <= 0 %}
+                <div class="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
+                    <span class="bg-[#e5a0a0] text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Out of Stock</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-xl font-bold text-gray-800">{{ candle.name }}</h3>
+                    <span class="text-lg font-bold text-[#e5a0a0]">₹{{ candle.price }}</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed">{{ candle.description }}</p>
+
+                {% if candle.stock > 0 %}
+                <a href="{% url 'place_order' candle.id %}" class="btn-primary block w-full text-center py-3 rounded-xl font-bold">
+                    Buy Now
+                </a>
+                {% else %}
+                <button disabled class="w-full bg-gray-200 text-gray-400 py-3 rounded-xl font-bold cursor-not-allowed">
+                    Notify Me
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-20 text-center">
+            <p class="text-gray-400 text-lg">No candles found. Try a different search!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
