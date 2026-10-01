@@ -10,7 +10,10 @@ Login details, local run steps aur Vercel deploy guide. Project overview ke liye
 |---|---|---|---|
 | Custom dashboard (local) | http://127.0.0.1:8000/dashboard/login/ | `anshi` | `______` ← yahan likh do |
 | Django admin (local) | http://127.0.0.1:8000/admin/ | `anshi` | same as above |
-| Live site dashboard (Vercel) | https://YOUR-APP.vercel.app/dashboard/login/ | `______` | `______` |
+| Live demo dashboard (Vercel) | https://lumiansh-django-project-sigma.vercel.app/dashboard/login/ | `demo` | `lumi-c754f738` |
+
+> **Live site demo mode mein hai:** Vercel pe database `demo.sqlite3` se banta hai. Wahan aaye orders/inquiries
+> thodi der baad apne aap reset ho jaate hain. Hamesha ke liye data save karna ho to neeche "Vercel pe deploy" wale steps se Postgres lagao.
 
 > Password bhool gaye? `python manage.py changepassword anshi` se naya set kar lo.
 >

@@ -31,14 +31,17 @@ SECRET_KEY = os.environ.get(
     'django-insecure-_696#cb%5_b1pxzaxik8ijf4zkncva1mrxy6!6e6ksb)x_*wit',
 )
 
+ON_VERCEL = bool(os.environ.get('VERCEL'))
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+# Off by default on Vercel so error pages never leak settings publicly.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False' if ON_VERCEL else 'True') == 'True'
 
 ALLOWED_HOSTS = [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h]
 CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',') if o]
 
 # Vercel sets VERCEL=1 on every deployment
-if os.environ.get('VERCEL'):
+if ON_VERCEL:
     ALLOWED_HOSTS += ['.vercel.app']
     CSRF_TRUSTED_ORIGINS += ['https://*.vercel.app']
 
@@ -97,12 +100,20 @@ WSGI_APPLICATION = 'lumiansh_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-# Uses DATABASE_URL (Postgres on Vercel) when set, otherwise the local SQLite file.
-# Vercel's filesystem is read-only, so SQLite cannot be used there.
+# Uses DATABASE_URL (e.g. Postgres) when set, otherwise a SQLite file.
+SQLITE_PATH = BASE_DIR / 'db.sqlite3'
+
+# Vercel without DATABASE_URL: demo mode. Only /tmp is writable there, so copy the
+# bundled demo database into it. Data written on the live site is temporary and
+# resets whenever Vercel starts a fresh instance.
+if ON_VERCEL and not os.environ.get('DATABASE_URL'):
+    import shutil
+    SQLITE_PATH = Path('/tmp/db.sqlite3')
+    if not SQLITE_PATH.exists():
+        shutil.copyfile(BASE_DIR / 'demo.sqlite3', SQLITE_PATH)
+
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-    )
+    'default': dj_database_url.config(default=f"sqlite:///{SQLITE_PATH}")
 }
 
 
