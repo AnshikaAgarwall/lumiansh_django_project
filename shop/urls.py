@@ -9,6 +9,7 @@ urlpatterns = [
     path('our-customers/',            views.customer_story,  name='customer_story'),
     path('buy-now/',                  views.buy_landing,     name='buy_landing'),
     path('buy/<int:candle_id>/',      views.place_order,     name='place_order'),
+    path('bulk-order/',               views.bulk_order,      name='bulk_order'),
 
     # ── Custom Admin Dashboard ───────────────────────────────
     path('dashboard/',                        views.admin_dashboard,      name='admin_dashboard'),
@@ -18,4 +19,5 @@ urlpatterns = [
     path('dashboard/product/<int:candle_id>/edit/',   views.admin_product_edit,   name='admin_product_edit'),
     path('dashboard/product/<int:candle_id>/delete/', views.admin_product_delete, name='admin_product_delete'),
     path('dashboard/order/<int:order_id>/status/',    views.admin_order_status,   name='admin_order_status'),
+    path('dashboard/bulk/<int:inquiry_id>/status/',   views.admin_bulk_status,    name='admin_bulk_status'),
 ]

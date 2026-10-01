@@ -17,7 +17,9 @@ The project includes product browsing, product details, purchasing flow, custome
 * 🛒 Buy / purchase flow
 * 👤 Customer information
 * ✅ Order success page
-* 📱 Responsive web pages
+* ⭐ Best sellers on the home page (based on real orders)
+* 💼 Bulk order inquiry form (corporate, festive, wedding gifting)
+* 📱 Mobile-friendly responsive pages
 
 ### Admin Side
 
@@ -27,14 +29,17 @@ The project includes product browsing, product details, purchasing flow, custome
 * ✏️ Update product information
 * 🗑️ Manage products
 * 👥 View customer/order information
+* 💼 Track bulk inquiries (New → Contacted → Confirmed → Closed)
 
 ### Backend
 
 * Django-based backend
-* SQLite database for development
+* SQLite database for development, PostgreSQL in production
 * Django ORM for database operations
 * Django migrations
 * Custom management command for seed data
+* Overselling-safe stock updates
+* Automated tests (`python manage.py test`)
 
 ---
 
@@ -45,9 +50,12 @@ The project includes product browsing, product details, purchasing flow, custome
 | Python           | Backend programming        |
 | Django           | Web framework              |
 | SQLite           | Development database       |
+| PostgreSQL (Neon)| Production database        |
 | HTML             | Page structure             |
-| CSS              | Styling                    |
+| Tailwind CSS     | Styling                    |
 | Django Templates | Dynamic frontend rendering |
+| WhiteNoise       | Static files in production |
+| Vercel           | Hosting                    |
 
 ---
 
@@ -58,6 +66,8 @@ lumiansh_project/
 │
 ├── manage.py
 ├── requirements.txt
+├── vercel.json
+├── NOTES.md
 ├── .gitignore
 │
 ├── lumiansh_project/
@@ -91,6 +101,7 @@ lumiansh_project/
 │           ├── admin_login.html
 │           ├── admin_dashboard.html
 │           ├── admin_product_form.html
+│           ├── bulk_order.html
 │           └── about_customers.html
 │
 └── README.md
@@ -169,6 +180,22 @@ This means a new developer can clone the project and create a fresh database usi
 python manage.py migrate
 ```
 
+In production (Vercel) the app uses PostgreSQL through the `DATABASE_URL` environment variable.
+
+---
+
+##  Deployment (Vercel)
+
+The project is configured for Vercel (`vercel.json`). Required environment variables:
+
+| Variable | Value |
+|---|---|
+| `DJANGO_SECRET_KEY` | a long random string |
+| `DJANGO_DEBUG` | `False` |
+| `DATABASE_URL` | PostgreSQL connection string (e.g. Neon via Vercel Storage) |
+
+Step-by-step deploy guide: see [NOTES.md](NOTES.md).
+
 ---
 
 ##  Dependencies
@@ -236,15 +263,10 @@ Some possible improvements for future versions:
 * User registration and login
 * Shopping cart
 * Wishlist
-* Product search and filtering
 * Product categories
 * Order history
 * Payment gateway integration
-* Better form validation
-* Improved responsive UI
-* Production database
-* Environment variables for sensitive settings
-* Deployment to a cloud platform
+* Email / WhatsApp alerts for new orders and bulk inquiries
 
 ---
 

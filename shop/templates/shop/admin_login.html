@@ -44,9 +44,9 @@
 
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-md w-full login-card rounded-3xl p-10 text-center animate-in fade-in duration-700">
-        <p class="cursive text-5xl text-[#e5a0a0] mb-2">LumiAnsh</p>
-        <p class="text-gray-400 text-xs uppercase tracking-widest mb-10">Admin Portal Access</p>
+    <div class="max-w-md w-full login-card rounded-3xl p-6 sm:p-10 text-center animate-in fade-in duration-700">
+        <p class="cursive text-4xl sm:text-5xl text-[#e5a0a0] mb-2">LumiAnsh</p>
+        <p class="text-gray-400 text-xs uppercase tracking-widest mb-6 sm:mb-10">Admin Portal Access</p>
 
         <!-- Messages -->
         {% if messages %}
@@ -65,14 +65,14 @@
             <div>
                 <label class="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-2">Username / ID</label>
                 <input type="text" name="username" required
-                    class="w-full p-4 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus-ring transition"
+                    class="w-full p-3 sm:p-4 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus-ring transition"
                     placeholder="Enter your admin ID">
             </div>
 
             <div>
                 <label class="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-2">Password</label>
                 <input type="password" name="password" required
-                    class="w-full p-4 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus-ring transition"
+                    class="w-full p-3 sm:p-4 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus-ring transition"
                     placeholder="••••••••">
             </div>
 
@@ -82,7 +82,7 @@
             </button>
         </form>
 
-        <div class="mt-10">
+        <div class="mt-6 sm:mt-10">
             <a href="{% url 'home_landing' %}"
                 class="text-xs text-gray-400 hover:text-[#e5a0a0] transition underline underline-offset-4">
                 ← Return to Shop Home

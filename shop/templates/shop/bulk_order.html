@@ -1,0 +1,111 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Bulk Orders - LumiAnsh{% endblock %}
+
+{% block nav_customers %}active{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center p-3 sm:p-6 bg-[#fff8f8]">
+    <div class="max-w-3xl w-full bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-[#f0d5d5]">
+
+        <!-- LEFT: Info -->
+        <div class="md:w-2/5 p-5 sm:p-8 flex flex-col justify-center space-y-4" style="background-color:#1a1a1a; color:white;">
+            <h2 class="cursive text-3xl sm:text-4xl text-[#e5a0a0]">Bulk Orders</h2>
+            <p class="text-gray-300 text-sm leading-relaxed">
+                Corporate gifts, festive hampers, wedding favours or party return gifts — we craft candles in bulk with custom fragrances and packaging.
+            </p>
+            <ul class="text-sm text-gray-400 space-y-2">
+                <li>✨ Minimum 10 candles</li>
+                <li>🎁 Custom packaging &amp; tags</li>
+                <li>💰 Special bulk pricing</li>
+                <li>📞 We call you back within 24 hours</li>
+            </ul>
+        </div>
+
+        <!-- RIGHT: Form -->
+        <div class="md:w-3/5 p-5 sm:p-8">
+            {% if submitted %}
+            <div class="h-full flex flex-col items-center justify-center text-center space-y-4 py-10">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-2xl">✅</div>
+                <h3 class="text-xl font-bold text-gray-800">Thank you!</h3>
+                <p class="text-gray-500 text-sm">We've received your bulk order request. Our team will contact you shortly.</p>
+                <a href="{% url 'product_list' %}" class="btn-primary inline-block px-8 py-3 rounded-full font-semibold">Explore Our Collection</a>
+            </div>
+            {% else %}
+            <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-4">Book Your Bulk Order</h3>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div class="mb-3 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 flex items-start gap-2">
+                    <span>⚠</span> {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Your Name <span class="text-[#e5a0a0]">*</span></label>
+                        <input type="text" name="name" required value="{{ form_data.name|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Company / Organisation</label>
+                        <input type="text" name="company" value="{{ form_data.company|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Phone <span class="text-[#e5a0a0]">*</span></label>
+                        <input type="tel" name="phone" required placeholder="9876543210" value="{{ form_data.phone|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Email</label>
+                        <input type="email" name="email" placeholder="name@example.com" value="{{ form_data.email|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Occasion <span class="text-[#e5a0a0]">*</span></label>
+                        <select name="occasion" required
+                                class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                            <option value="">Select…</option>
+                            {% for value, label in occasions %}
+                            <option value="{{ value }}" {% if form_data.occasion == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Quantity <span class="text-[#e5a0a0]">*</span></label>
+                        <input type="number" name="quantity" required min="10" placeholder="50" value="{{ form_data.quantity|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Needed By</label>
+                        <input type="date" name="needed_by" value="{{ form_data.needed_by|default:'' }}"
+                               class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Requirements</label>
+                    <textarea name="message" rows="3" placeholder="Fragrance, colours, packaging, budget…"
+                              class="w-full mt-1 p-3 bg-[#fff8f8] border border-[#f0d5d5] rounded-xl focus:ring-2 focus:ring-[#e5a0a0] outline-none transition">{{ form_data.message|default:'' }}</textarea>
+                </div>
+
+                <button type="submit" class="btn-primary w-full font-bold py-3.5 sm:py-4 rounded-xl shadow-lg">
+                    Send Request
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

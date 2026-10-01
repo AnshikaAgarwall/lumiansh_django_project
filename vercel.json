@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "lumiansh_project/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "lumiansh_project/wsgi.py"
+    }
+  ]
+}

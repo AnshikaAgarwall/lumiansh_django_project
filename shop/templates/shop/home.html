@@ -7,54 +7,78 @@
 {% block content %}
 
 <!-- HERO POSTER -->
-<section class="relative w-full overflow-hidden bg-gray-900" style="height: 55vh;">
+<!-- Full screen height minus the 4rem navbar -->
+<section class="relative w-full overflow-hidden bg-gray-900" style="height: calc(100vh - 4rem); min-height: 420px;">
     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1Kq8zr-NRVUvOPYj02o-04l-wI_ArqbmXnoQiQDebGQ&s=10----"
          class="absolute inset-0 w-full h-full object-cover opacity-40" alt="LumiAnsh Experience">
-    <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-        <div class="max-w-4xl">
-            <h1 class="cursive text-5xl md:text-7xl text-white mb-4" style="text-shadow: 0 2px 16px rgba(229,160,160,0.5);">LumiAnsh</h1>
-            <p class="text-white/80 text-lg md:text-xl mb-8">Handcrafted gel candles with love &amp; elegance</p>
-
-            <a href="{% url 'product_list' %}" class="btn-primary px-10 py-4 rounded-full font-bold text-lg shadow-xl inline-block">
+    <div class="absolute inset-0 flex items-end pb-12 md:pb-16">
+        <div class="max-w-6xl w-full mx-auto px-4 sm:px-6">
+            <a href="{% url 'product_list' %}" class="btn-primary px-7 py-3 sm:px-10 sm:py-4 rounded-full font-bold text-base sm:text-lg shadow-xl inline-block">
                 Shop the Collection
             </a>
         </div>
     </div>
 </section>
 
+<!-- BEST SELLERS -->
+<section class="py-10 sm:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <h2 class="cursive text-3xl sm:text-4xl text-[#e5a0a0] text-center mb-6 sm:mb-10">Best Sellers</h2>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            {% for candle in best_sellers %}
+            <a href="{% url 'place_order' candle.id %}" class="group bg-white rounded-2xl shadow-sm card-hover overflow-hidden border border-[#f0d5d5] flex flex-col">
+                <div class="relative aspect-square overflow-hidden bg-[#fff8f8]">
+                    <img src="{{ candle.image_url|default:'https://via.placeholder.com/400' }}"
+                         alt="{{ candle.name }}"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    {% if candle.stock <= 0 %}
+                    <div class="absolute inset-0 bg-white/60 flex items-center justify-center">
+                        <span class="bg-[#e5a0a0] text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Out of Stock</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-3 sm:p-4 flex-1 flex flex-col">
+                    <h3 class="font-bold text-gray-800 mb-1 text-sm sm:text-base leading-snug">{{ candle.name }}</h3>
+                    <span class="font-bold text-[#e5a0a0] mt-auto text-sm sm:text-base">₹{{ candle.price }}</span>
+                </div>
+            </a>
+            {% empty %}
+            <p class="col-span-full text-center text-gray-400">New candles coming soon!</p>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="{% url 'product_list' %}" class="text-sm font-semibold text-[#e5a0a0] hover:underline">View all candles →</a>
+        </div>
+    </div>
+</section>
+
 <!-- WHY CHOOSE US -->
-<section class="bg-white border-b border-[#f0d5d5] py-16">
-    <div class="max-w-4xl mx-auto px-6 space-y-16">
-        <div class="text-center space-y-6">
-            <h2 class="cursive text-4xl text-[#e5a0a0]">Why Choose Us</h2>
-            <div class="grid grid-cols-1 gap-6 text-left max-w-2xl mx-auto">
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover">
-                    <span class="text-2xl">🏆</span>
-                    <div>
-                        <p class="font-bold text-gray-800">Expertise You Can Trust</p>
-                        <p class="text-sm text-gray-600">Our team has years of experience delivering high-quality results and handcrafted excellence.</p>
-                    </div>
+<section class="bg-white border-y border-[#f0d5d5] py-10 sm:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-12 sm:space-y-16">
+        <div class="text-center space-y-6 sm:space-y-8">
+            <h2 class="cursive text-3xl sm:text-4xl text-[#e5a0a0]">Why Choose Us</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div class="p-5 sm:p-6 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover space-y-2 sm:space-y-3">
+                    <span class="text-3xl">🏆</span>
+                    <p class="font-bold text-gray-800">Expertise You Can Trust</p>
+                    <p class="text-sm text-gray-600">Our team has years of experience delivering high-quality results and handcrafted excellence.</p>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover">
-                    <span class="text-2xl">💰</span>
-                    <div>
-                        <p class="font-bold text-gray-800">Affordable &amp; Transparent Pricing</p>
-                        <p class="text-sm text-gray-600">No hidden charges, just fair prices for premium quality products.</p>
-                    </div>
+                <div class="p-5 sm:p-6 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover space-y-2 sm:space-y-3">
+                    <span class="text-3xl">💰</span>
+                    <p class="font-bold text-gray-800">Affordable &amp; Transparent Pricing</p>
+                    <p class="text-sm text-gray-600">No hidden charges, just fair prices for premium quality products.</p>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover">
-                    <span class="text-2xl">🤝</span>
-                    <div>
-                        <p class="font-bold text-gray-800">Personalized Solutions</p>
-                        <p class="text-sm text-gray-600">We tailor our approach to meet your unique needs and gifting requirements.</p>
-                    </div>
+                <div class="p-5 sm:p-6 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover space-y-2 sm:space-y-3">
+                    <span class="text-3xl">🤝</span>
+                    <p class="font-bold text-gray-800">Personalized Solutions</p>
+                    <p class="text-sm text-gray-600">We tailor our approach to meet your unique needs and gifting requirements.</p>
                 </div>
-                <div class="flex items-start gap-4 p-4 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover">
-                    <span class="text-2xl">⚡</span>
-                    <div>
-                        <p class="font-bold text-gray-800">Fast &amp; Reliable Service</p>
-                        <p class="text-sm text-gray-600">We value your time and deliver on schedule, ensuring your satisfaction is the top priority.</p>
-                    </div>
+                <div class="p-5 sm:p-6 rounded-xl bg-[#fff8f8] border border-[#f0d5d5] card-hover space-y-2 sm:space-y-3">
+                    <span class="text-3xl">⚡</span>
+                    <p class="font-bold text-gray-800">Fast &amp; Reliable Service</p>
+                    <p class="text-sm text-gray-600">We value your time and deliver on schedule, ensuring your satisfaction is the top priority.</p>
                 </div>
             </div>
         </div>
@@ -62,22 +86,22 @@
         <hr class="border-[#f0d5d5] w-1/2 mx-auto">
 
         <div class="text-center space-y-6">
-            <h2 class="cursive text-4xl text-[#e5a0a0]">The LumiAnsh Difference</h2>
+            <h2 class="cursive text-3xl sm:text-4xl text-[#e5a0a0]">The LumiAnsh Difference</h2>
             <div class="grid grid-cols-1 gap-4 text-left max-w-2xl mx-auto">
-                <p class="flex items-center gap-3 text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
-                    <span class="text-[#e5a0a0]">✨</span> <strong>Elegant Design:</strong> Beautifully crafted with a realistic rose inside.
+                <p class="flex items-start gap-3 text-sm sm:text-base text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
+                    <span class="text-[#e5a0a0]">✨</span> <span><strong>Elegant Design:</strong> Beautifully crafted with a realistic rose inside.</span>
                 </p>
-                <p class="flex items-center gap-3 text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
-                    <span class="text-[#e5a0a0]">✨</span> <strong>Long-Lasting Burn:</strong> Gel candles burn slowly and evenly for a soft glow.
+                <p class="flex items-start gap-3 text-sm sm:text-base text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
+                    <span class="text-[#e5a0a0]">✨</span> <span><strong>Long-Lasting Burn:</strong> Gel candles burn slowly and evenly for a soft glow.</span>
                 </p>
-                <p class="flex items-center gap-3 text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
-                    <span class="text-[#e5a0a0]">✨</span> <strong>Aromatic Bliss:</strong> Gentle fragrance that relaxes your mind.
+                <p class="flex items-start gap-3 text-sm sm:text-base text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
+                    <span class="text-[#e5a0a0]">✨</span> <span><strong>Aromatic Bliss:</strong> Gentle fragrance that relaxes your mind.</span>
                 </p>
-                <p class="flex items-center gap-3 text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
-                    <span class="text-[#e5a0a0]">✨</span> <strong>Handmade with Love:</strong> Carefully made to ensure highest quality.
+                <p class="flex items-start gap-3 text-sm sm:text-base text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
+                    <span class="text-[#e5a0a0]">✨</span> <span><strong>Handmade with Love:</strong> Carefully made to ensure highest quality.</span>
                 </p>
-                <p class="flex items-center gap-3 text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
-                    <span class="text-[#e5a0a0]">✨</span> <strong>Eco-Friendly &amp; Safe:</strong> Made from non-toxic gel wax.
+                <p class="flex items-start gap-3 text-sm sm:text-base text-gray-700 bg-white p-3 shadow-sm rounded-lg border border-[#f0d5d5]">
+                    <span class="text-[#e5a0a0]">✨</span> <span><strong>Eco-Friendly &amp; Safe:</strong> Made from non-toxic gel wax.</span>
                 </p>
             </div>
         </div>
